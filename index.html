@@ -66,6 +66,8 @@
   .row label{min-width:56px}
   select{background:#ffffff14; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:4px 8px}
   select option{color:#000}
+  .hint{margin:-8px 0 16px; text-align:center; font-size:.85rem; color:var(--text); background:#ffffff1f; border:1px solid var(--line); border-radius:99px; padding:6px 12px; cursor:pointer}
+  .hint[hidden]{display:none}
   footer{margin-top:18px; text-align:center; font-size:.75rem; color:var(--muted)}
   footer a{color:var(--accent)}
   .err{display:none; color:#ff9aa8; font-size:.85rem; margin-top:12px; text-align:center}
@@ -78,6 +80,8 @@
     <canvas id="viz" aria-hidden="true"></canvas>
     <div class="disc" aria-hidden="true"></div>
   </div>
+
+  <div class="hint" id="hint" hidden>▶ Tap anywhere to play</div>
 
   <h1>Palakodi Mugam Thandi</h1>
   <p class="sub">Unna Mattum Paaka Aasa Vechen · 0:24 clip</p>
@@ -131,6 +135,21 @@
   a.addEventListener('play', () => { setPlaying(true); startViz(); });
   a.addEventListener('pause', () => setPlaying(false));
   a.addEventListener('ended', () => setPlaying(false));
+  // Autoplay on load. Browsers may block sound until the first tap/key, so fall back to that.
+  const hint = $('hint');
+  const arm = () => {
+    hint.hidden = false;
+    const go = e => {
+      if (e.target.closest && e.target.closest('button,input,select')) return;
+      a.play().catch(()=>{});
+    };
+    ['pointerdown','keydown','touchend'].forEach(ev => document.addEventListener(ev, go));
+    a.addEventListener('play', () => {
+      hint.hidden = true;
+      ['pointerdown','keydown','touchend'].forEach(ev => document.removeEventListener(ev, go));
+    }, { once: true });
+  };
+  a.play().catch(arm);
   a.addEventListener('error', () => $('err').style.display = 'block');
 
   play.onclick = toggle;

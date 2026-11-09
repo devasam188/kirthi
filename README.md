@@ -1,6 +1,6 @@
 # Audio Player Site
 
-Static site (plain HTML/CSS/JS, no dependencies). Put any MP3 at `assets/song.mp3`.
+Audio player at `/palakodi/` (plain HTML/CSS/JS). Replace `palakodi/assets/song.mp3` to change the song.
 
 ## Run locally
     python3 -m http.server 8000   # open http://localhost:8000
